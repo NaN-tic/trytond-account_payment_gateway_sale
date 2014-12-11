@@ -1,0 +1,7 @@
+# 
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "field:sale.sale,gateway_amount:"
+msgid "Gateway Amount"
+msgstr "Import pasarel·la pagament"
