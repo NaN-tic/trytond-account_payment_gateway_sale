@@ -31,3 +31,45 @@ class Sale:
                     if transaction.origin == sale:
                         result[name][sale.id] += transaction.amount
         return result
+
+    @classmethod
+    def workflow_to_done(cls, sales):
+        pool = Pool()
+        Invoice = pool.get('account.invoice')
+        Date = pool.get('ir.date')
+        for sale in sales:
+            if sale.state == 'draft':
+                cls.quote([sale])
+            if sale.state == 'quotation':
+                cls.confirm([sale])
+            if sale.state == 'confirmed':
+                cls.process([sale])
+
+            if not sale.invoices and sale.invoice_method == 'order':
+                cls.raise_user_error('not_customer_invoice')
+
+            grouping = getattr(sale.party, 'sale_invoice_grouping_method',
+                False)
+            if sale.invoices and not grouping:
+                for invoice in sale.invoices:
+                    if invoice.state == 'draft':
+                        if not getattr(invoice, 'invoice_date', False):
+                            invoice.invoice_date = Date.today()
+                        if not getattr(invoice, 'accounting_date', False):
+                            invoice.accounting_date = Date.today()
+                        invoice.description = sale.reference
+                        invoice.save()
+                Invoice.post(sale.invoices)
+                for payment in sale.payments:
+                    invoice = sale.invoices[0]
+                    payment.invoice = invoice.id
+                    # Because of account_invoice_party_without_vat module
+                    # could be installed, invoice party may be different of
+                    # payment party if payment party has not any vat
+                    # and both parties must be the same
+                    if payment.party != invoice.party:
+                        payment.party = invoice.party
+                    payment.save()
+
+            if sale.is_done():
+                cls.do([sale])
