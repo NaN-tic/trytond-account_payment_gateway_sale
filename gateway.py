@@ -33,8 +33,7 @@ class AccountPaymentGatewayTransaction:
 
                 for invoice in sale.invoices:
                     if invoice.total_amount == transaction.amount:
+                        setattr(transaction, 'origin', invoice)
                         break
-
-                setattr(transaction, 'origin', invoice)
 
         super(AccountPaymentGatewayTransaction, cls).confirm(transactions)
