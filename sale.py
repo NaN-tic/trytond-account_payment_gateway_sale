@@ -6,10 +6,10 @@ from trytond.pool import Pool, PoolMeta
 from decimal import Decimal
 
 __all__ = ['Sale']
-__metaclass__ = PoolMeta
 
 
 class Sale:
+    __metaclass__ = PoolMeta
     __name__ = 'sale.sale'
     gateway_amount = fields.Function(fields.Numeric("Gateway Amount"), 
         "get_gateway_amount")
