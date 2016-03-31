@@ -31,9 +31,12 @@ class AccountPaymentGatewayTransaction:
                 sale.save()
                 Sale.workflow_to_done([sale])
 
+                invoice = None
                 for invoice in sale.invoices:
                     if invoice.total_amount == transaction.amount:
-                        setattr(transaction, 'origin', invoice)
                         break
+
+                if invoice:
+                    setattr(transaction, 'origin', invoice)
 
         super(AccountPaymentGatewayTransaction, cls).confirm(transactions)
