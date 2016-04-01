@@ -17,26 +17,35 @@ class AccountPaymentGatewayTransaction:
         res.append('sale.sale')
         return res
 
-    @classmethod
-    def confirm(cls, transactions):
+    def _set_invoice_as_origin_temporarily(self):
         pool = Pool()
         Sale = pool.get('sale.sale')
+        if isinstance(self.origin, Sale):
+            sale = self.origin
+            if not sale.reference:
+                Sale.set_reference([sale])
+            sale.description = sale.reference
+            sale.save()
+            Sale.workflow_to_done([sale])
 
+            invoice = None
+            for invoice in sale.invoices:
+                if invoice.total_amount == self.amount:
+                    break
+
+            if invoice:
+                setattr(self, 'origin', invoice)
+
+    @classmethod
+    def confirm(cls, transactions):
         for transaction in transactions:
-            if isinstance(transaction.origin, Sale):
-                sale = transaction.origin
-                if not sale.reference:
-                    Sale.set_reference([sale])
-                sale.description = sale.reference
-                sale.save()
-                Sale.workflow_to_done([sale])
-
-                invoice = None
-                for invoice in sale.invoices:
-                    if invoice.total_amount == transaction.amount:
-                        break
-
-                if invoice:
-                    setattr(transaction, 'origin', invoice)
+            transaction._set_invoice_as_origin_temporarily()
 
         super(AccountPaymentGatewayTransaction, cls).confirm(transactions)
+
+    @classmethod
+    def refund(cls, transactions):
+        for transaction in transactions:
+            transaction._set_invoice_as_origin_temporarily()
+
+        super(AccountPaymentGatewayTransaction, cls).refund(transactions)
