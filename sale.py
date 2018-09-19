@@ -8,8 +8,7 @@ from decimal import Decimal
 __all__ = ['Sale']
 
 
-class Sale:
-    __metaclass__ = PoolMeta
+class Sale(metaclass=PoolMeta):
     __name__ = 'sale.sale'
     gateway_amount = fields.Function(fields.Numeric("Gateway Amount"),
         "get_gateway_amount")

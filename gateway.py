@@ -7,8 +7,7 @@ from trytond.pool import Pool, PoolMeta
 __all__ = ['AccountPaymentGatewayTransaction']
 
 
-class AccountPaymentGatewayTransaction:
-    __metaclass__ = PoolMeta
+class AccountPaymentGatewayTransaction(metaclass=PoolMeta):
     __name__ = 'account.payment.gateway.transaction'
 
     @classmethod
