@@ -57,7 +57,7 @@ class Sale:
                             invoice.invoice_date = Date.today()
                         if not getattr(invoice, 'accounting_date', False):
                             invoice.accounting_date = Date.today()
-                        invoice.description = sale.reference
+                        invoice.description = sale.number
                         invoice.save()
                 Invoice.post(sale.invoices)
                 for payment in sale.payments:

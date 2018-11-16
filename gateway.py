@@ -22,9 +22,9 @@ class AccountPaymentGatewayTransaction:
         Sale = pool.get('sale.sale')
         if isinstance(self.origin, Sale):
             sale = self.origin
-            if not sale.reference:
-                Sale.set_reference([sale])
-            sale.description = sale.reference
+            if not sale.number:
+                Sale.set_number([sale])
+            sale.description = sale.number
             sale.save()
             Sale.workflow_to_done([sale])
 
