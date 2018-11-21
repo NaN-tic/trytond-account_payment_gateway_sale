@@ -72,3 +72,16 @@ class Sale(metaclass=PoolMeta):
 
             if sale.is_done():
                 cls.do([sale])
+
+    @classmethod
+    def delete(cls, sales):
+        Transaction = Pool().get('account.payment.gateway.transaction')
+
+        origins = ['sale.sale,%s' % sale.id for sale in sales]
+        transactions = Transaction.search([
+            ('origin', 'in', origins),
+            ])
+        if transactions:
+            Transaction.delete(transactions)
+
+        super(Sale, cls).delete(sales)
