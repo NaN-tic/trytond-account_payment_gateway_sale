@@ -4,6 +4,8 @@
 from trytond.model import fields
 from trytond.pool import Pool, PoolMeta
 from decimal import Decimal
+from trytond.i18n import gettext
+from trytond.exceptions import UserError
 
 __all__ = ['Sale']
 
@@ -45,7 +47,9 @@ class Sale(metaclass=PoolMeta):
                 cls.process([sale])
 
             if not sale.invoices and sale.invoice_method == 'order':
-                cls.raise_user_error('not_customer_invoice')
+                raise UserError(gettext(
+                    'sale_payment.not_customer_invoice',
+                        reference=sale.reference))
 
             grouping = getattr(sale.party, 'sale_invoice_grouping_method',
                 False)

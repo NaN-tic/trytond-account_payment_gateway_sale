@@ -5,3 +5,8 @@ msgstr "Content-Type: text/plain; charset=utf-8\n"
 msgctxt "field:sale.sale,gateway_amount:"
 msgid "Gateway Amount"
 msgstr "Import pasarel·la pagament"
+
+msgctxt "error:sale.sale:"
+msgid "A customer invoice/refund from sale device (%s) has not been created."
+msgstr ""
+"Una factura/devolució d'un terminal de venda (%s) no s'ha creat."
